@@ -1,5 +1,7 @@
 language: rust
 script: cd SS13
+script: cargo build --verbose
+script: cargo test --verbose
 
 rust:
   - stable
