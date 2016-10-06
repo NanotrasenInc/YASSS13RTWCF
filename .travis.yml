@@ -1,4 +1,5 @@
 language: rust
+before_script: cd SS13
 
 rust:
   - stable
