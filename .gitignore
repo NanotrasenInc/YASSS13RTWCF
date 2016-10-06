@@ -63,3 +63,7 @@ CTestTestfile.cmake
 
 build/*
 sfml/*
+target
+
+.idea
+*.iml
