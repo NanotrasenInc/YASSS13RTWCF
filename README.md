@@ -14,8 +14,8 @@ AKA: Yet Another Shitty SS13 Remake That Will Certainly Fail. It is just what it
 
 # Usage
 
-- Download the latest version from the release page (none yet), or compile it yourself (why would you?)
-- Run `SS13.exe`
+- Download the latest version from the release page (none yet), or compile it yourself.
+- Run the executables in `target/debug/`
 
 # Building YASSS13RTWCF
 

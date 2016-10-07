@@ -1,0 +1,15 @@
+[package]
+name = "client"
+version = "0.0.1"
+authors = [
+    "PJB3005 <pieterjan.briers@gmail.com>",
+    "clusterfack <clusterfack@users.noreply.github.com>",
+    "CrAzYPiLoT-SS13 <minima38123@gmail.com>"
+]
+
+workspace = "../"
+
+[dependencies]
+piston = "0.25.1"
+piston_window = "0.54.0"
+shared = { path = "../shared" }

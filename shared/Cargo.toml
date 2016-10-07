@@ -1,0 +1,11 @@
+[package]
+name = "shared"
+version = "0.1.0"
+authors = [
+    "PJB3005 <pieterjan.briers@gmail.com>",
+    "clusterfack <clusterfack@users.noreply.github.com>",
+    "CrAzYPiLoT-SS13 <minima38123@gmail.com>"
+]
+workspace = "../"
+
+[dependencies]
