@@ -1,10 +1,22 @@
 language: rust
 before_script: cd SS13
 
+env:
+  matrix:
+    - CRATE="server"
+    - CRATE="client"
+
 rust:
   - stable
   - beta
   - nightly
+
 matrix:
   allow_failures:
     - rust: nightly
+
+
+script:
+  - cd $CRATE
+  - cargo build --verbose
+  - cargo test --verbose
