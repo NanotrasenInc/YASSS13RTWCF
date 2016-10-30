@@ -31,6 +31,27 @@ impl Config {
         file.read_to_string(&mut data).expect("Unable to read config file.");
         self.load(&*data);
     }
+
+    // Allows you to access a key in the config with a single string.
+    // For example: "connection.port"
+    // TODO: Error handling. As usual.
+    pub fn get_config(&self, key: &'static str) -> Option<toml::Value> {
+        let key = String::from(key);
+        let mut current = &self.toml;
+
+        for name in key.split('.') {
+            if !current.contains_key(name) {
+                return None;
+            }
+            if let toml::Value::Table(ref table) = current[name] {
+                current = table;
+            } else {
+                return Some(current[name].clone());
+            }
+        }
+        None
+    }
+
 }
 
 lazy_static! {
