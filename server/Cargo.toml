@@ -11,5 +11,6 @@ workspace = "../"
 publish = false
 
 [dependencies]
+lazy_static = "0.2.1"
 shared = { path = "../shared" }
 toml = "0.2.1"

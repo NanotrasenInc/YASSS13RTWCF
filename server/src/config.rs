@@ -1,0 +1,41 @@
+extern crate toml;
+
+use std::sync::Mutex;
+use std::path::Path;
+use std::io::Read;
+use std::fs::File;
+
+pub struct Config {
+    pub toml: toml::Table
+}
+
+impl Config {
+    // Load the config from the string.
+    // TODO: Improve error handling on this, make it return a Result.
+    pub fn load(&mut self, data: &str) {
+        let mut parser = toml::Parser::new(data);
+        match parser.parse() {
+            Some(value) => {
+                self.toml = value;
+            }
+            None => {
+                println!("Hit parser erros trying to load a config! {:?}", parser.errors);
+            }
+        }
+    }
+
+    // TODO: error handling.
+    pub fn load_file(&mut self, path: &Path) {
+        let mut data = String::new();
+        let mut file = File::open(path).expect("Unable to open config fiile.");
+        file.read_to_string(&mut data).expect("Unable to read config file.");
+        self.load(&*data);
+    }
+}
+
+lazy_static! {
+    pub static ref CONFIG: Mutex<Config> = {
+        // Initialize it to nothing.
+        Mutex::new(Config { toml: toml::Table::new() })
+    };
+}
