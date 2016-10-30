@@ -6,8 +6,9 @@ authors = [
     "clusterfack <clusterfack@users.noreply.github.com>",
     "CrAzYPiLoT-SS13 <minima38123@gmail.com>"
 ]
-
+build = "../build.rs"
 workspace = "../"
+publish = false
 
 [dependencies]
 piston = "0.25.1"

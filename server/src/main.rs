@@ -1,7 +1,7 @@
 extern crate shared;
 
-use shared::test;
+mod config;
 
 fn main() {
-    test::test();
+    // honk
 }

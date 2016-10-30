@@ -7,5 +7,6 @@ authors = [
     "CrAzYPiLoT-SS13 <minima38123@gmail.com>"
 ]
 workspace = "../"
+publish = false
 
 [dependencies]
