@@ -35,7 +35,7 @@ impl Config {
     // Allows you to access a key in the config with a single string.
     // For example: "connection.port"
     // TODO: Error handling. As usual.
-    pub fn get_config(&self, key: &'static str) -> Option<toml::Value> {
+    pub fn get(&self, key: &'static str) -> Option<toml::Value> {
         let key = String::from(key);
         let mut current = &self.toml;
 
