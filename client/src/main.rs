@@ -13,19 +13,13 @@ use opengl_graphics::{GlGraphics, OpenGL, Texture};
 use graphics::{Image, clear, draw_state, DrawState};
 use graphics::rectangle::square;
 use std::path::Path;
+use piston::input::RenderEvent;
 
 fn main() {
     let opengl  = OpenGL::V3_2;
     let mut gl  = GlGraphics::new(opengl);
-/*    let window  = Window::new(
-            opengl,
-            WindowSettings::new(
-                "Example",
-                [600, 400]
-            ).exit_on_esc(true));
-*/
 
-    let mut window: Window = WindowSettings::new("Useless Window!", [640, 640])
+    let mut window: GlutinWindow = WindowSettings::new("Useless Window!", [640, 640])
         .opengl(opengl)
         .exit_on_esc(true)
         .build()
@@ -39,13 +33,14 @@ fn main() {
     let draw_state = draw_state::DrawState::default();
 
     //Main loop
-    while let Some(e) = window.events() {
+    let mut events = window.events();
+    while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
             gl.draw(r.viewport(), |c, gl| {
                 //Clear the screen
                 clear([0.0, 0.0, 0.0, 1.0], gl);
                 //Draw the image with the texture
-                image.draw(&texture, &draw_state, c.transform, gl);
+                image.draw(&image, &texture, &draw_state, c.transform, gl);
             });
         }
     }
