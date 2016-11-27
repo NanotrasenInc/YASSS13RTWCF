@@ -11,6 +11,6 @@ workspace = "../"
 publish = false
 
 [dependencies]
-piston = "0.25.1"
-piston_window = "0.54.0"
+piston = "0.27.0"
+piston_window = "0.57.0"
 shared = { path = "../shared" }
