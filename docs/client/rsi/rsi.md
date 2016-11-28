@@ -39,6 +39,8 @@ Key | Meaning
 
 <sup>\* Optional value.</sup>
 
+States are always ordered alphabetically by their corresponding file name.
+
 #### Sprite sheet
 
 The PNG file accompanying a state is always the name of the state, with all selectors appended with plus characters, sorted alphabetically. For example, a state with name "hello" and selectors "x" and "y" would be `hello+x+y.png` on disk.
@@ -59,6 +61,7 @@ size:
 states:
     - name: hello
       select: []
+      flags: {}
       directions: 4
       delays:
           - [1, 1, 1]
