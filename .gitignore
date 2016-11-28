@@ -48,4 +48,4 @@ fabric.properties
 modules.xml
 .idea/misc.xml
 *.ipr
-.atom-build.json
+.atom-build.*
