@@ -49,3 +49,8 @@ modules.xml
 .idea/misc.xml
 *.ipr
 .atom-build.*
+
+
+# Python
+__pycache__/
+*.pyc
