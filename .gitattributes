@@ -1,2 +1,14 @@
-# Force LF newlines
+# Force proper newlines
 * text=auto
+
+# Common file types.
+LICENSE text
+Makefile text
+*.toml text
+*.yml text
+*.bat text
+*.rs text
+*.py text
+*.md text
+
+.png binary
