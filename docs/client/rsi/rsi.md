@@ -2,13 +2,13 @@
 
 The **RSI** (Rust Station Image) format is intended to be a flexible, open, and readable way <!--Insert more marketing bull that sounds good here!--> to define icons inside sprite sheets in the same vein as the BYOND `.dmi` format. An RSI is considered an "icon", and it can contain "states" which are sub sections of said master icon. These states can define custom flags, animations, and directional icons out of the box.
 
-An RSI is a folder with a name that ends in `.rsi`, and contains a `meta.yml` and one or more PNG files according to the names of states.
+An RSI is a folder with a name that ends in `.rsi`, and contains a `meta.json` and one or more PNG files according to the names of states.
 
-The image metadata (what defines states, animations, etc...) is stored in the `meta.yml` file as YAML. The actual sprites are stored in sprite sheets as PNG files in the folder. Each unique state corresponds to a sprite sheet with the same name.
+The image metadata (what defines states, animations, etc...) is stored in the `meta.json` file as JSON. The actual sprites are stored in sprite sheets as PNG files in the folder. Each unique state corresponds to a sprite sheet with the same name.
 
-## YAML
+## JSON
 
-The root of the YAML file contains the following values:
+The root of the JSON file contains the following values:
 
 Key | Meaning
 --- | -------
@@ -51,23 +51,29 @@ The file contains the individual states resolved with the directions and delays 
 
 Note that in practice the YAML writer probably writes the most compact YAML possible to reduce file size.
 
-```yml
-version: 1
+```json
+{
+    "version": 1,
 
-size:
-    x: 32
-    y: 32
-
-states:
-    - name: hello
-      select: []
-      flags: {}
-      directions: 4
-      delays:
-          - [1, 1, 1]
-          - [2, 3, 4]
-          - [3, 4, 5]
-          - [4, 5, 6]
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "hello",
+            "select": [],
+            "flags": {},
+            "directions": 4,
+            "delays": [
+                [1, 1, 1],
+                [2, 3, 4],
+                [3, 4, 5],
+                [4, 5, 6]
+            ]
+        }
+    ]
+}
 ```
 
 # Design Goals
