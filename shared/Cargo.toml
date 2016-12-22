@@ -10,3 +10,6 @@ workspace = "../"
 publish = false
 
 [dependencies]
+image = "0.10.3"
+rustc-serialize = "0.3.19"
+yaml-rust = "0.3.5"

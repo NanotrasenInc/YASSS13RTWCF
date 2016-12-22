@@ -10,7 +10,7 @@ AKA: Yet Another Shitty SS13 Remake That Will Certainly Fail. It is just what it
 
 # Requirements
 
-- Requires [the Rust language](https://www.rust-lang.org/en-US/downloads.html) if you intend to compile the project yourself. 
+- Requires [Rust](https://www.rust-lang.org/en-US/downloads.html) if you intend to compile the project yourself.
 
 # Usage
 
@@ -19,9 +19,11 @@ AKA: Yet Another Shitty SS13 Remake That Will Certainly Fail. It is just what it
 
 # Building YASSS13RTWCF
 
-As you most probably know, we use Rust as our main framework language and Lua for our embedded language.
-After downloading the source code, all you need to do is install Rust and run the following command:
+As you most probably know, we use Rust as our main framework language and Python for our embedded language.
+After downloading the source code, all you need to do is install Rust and run the following commands:
 
-`cargo build`
+Unix: `make`
+
+Windows: `build.bat`
 
 This will compile the executable which you can subsequently run. Have fun!

@@ -47,9 +47,9 @@ The PNG file accompanying a state is always the name of the state, with all sele
 
 The file contains the individual states resolved with the directions and delays of the state. The size of the file is always a multiple of the RSI's `size`. Sprites are ordered from the top left to the bottom right, always going horizontally first. The amount of sprites per row or column is always made to be as equal as possible, favoring rows to be longer than rows if the amount of states is able to be divided perfectly.
 
-### Example YAML
+### Example JSON
 
-Note that in practice the YAML writer probably writes the most compact YAML possible to reduce file size.
+Note that in practice the JSON writer probably writes the most compact JSON possible to reduce file size.
 
 ```json
 {
