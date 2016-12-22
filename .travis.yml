@@ -4,6 +4,7 @@ env:
   matrix:
     - CRATE="server"
     - CRATE="client"
+    - CRATE="shared"
 
 rust:
   - stable
@@ -17,5 +18,4 @@ matrix:
 
 script:
   - cd $CRATE
-  - cargo build --verbose
   - cargo test --verbose
