@@ -4,6 +4,7 @@ use std::io::Error as IOError;
 use rustc_serialize::json::BuilderError;
 
 /// Represents an error while parsing an RSI.
+#[derive(Debug)]
 pub enum RsiError {
     /// If an error occured during the IO of a file.
     IO(IOError),
@@ -12,7 +13,7 @@ pub enum RsiError {
     Json(BuilderError),
 
     /// If some part of the metadata is corrupt.
-    Metadata,
+    Metadata(String),
 
     /// If the version of the RSI can't be handled by this version of the module.
     Version,

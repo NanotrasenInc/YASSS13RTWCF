@@ -62,7 +62,7 @@ impl Rsi {
     /// Opens an RSI from the file system.
     ///
     /// TODO: Make this return a proper error.
-    fn open<P: AsRef<Path>>(path: P) -> Result<Rsi, RsiError> {
+    pub fn open<P: AsRef<Path>>(path: P) -> Result<Rsi, RsiError> {
         let path = path.as_ref();
 
         // Open and read file to meta_content, return an Err if anything failed.
@@ -80,7 +80,7 @@ impl Rsi {
             Ok(x) => if let Json::Object(a) = x {
                         a
                      } else {
-                        return Err(RsiError::Metadata);
+                        return Err(RsiError::Metadata("Not a root object".to_string()));
                      },
             Err(error) => return Err(RsiError::Json(error))
         };
@@ -90,9 +90,9 @@ impl Rsi {
                 Json::U64(version) => if MAXIMUM_RSI_VERSION < version || version < MINIMUM_RSI_VERSION {
                     return Err(RsiError::Version);
                 },
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("Version not a number.".to_string()))
             },
-            None => return Err(RsiError::Metadata)
+            None => return Err(RsiError::Metadata("Version not included.".to_string()))
         }
 
         // Surely there's a better way for this, right?
@@ -103,22 +103,22 @@ impl Rsi {
                     match o.get("x") {
                         Some(ref x) => match **x {
                             Json::U64(ref x) => size.0 = *x as u32,
-                            _ => return Err(RsiError::Metadata)
+                            _ => return Err(RsiError::Metadata("size: x not a number.".to_string()))
                         },
-                        None => return Err(RsiError::Metadata)
+                        None => return Err(RsiError::Metadata("Size: x not included.".to_string()))
                     }
 
                     match o.get("y") {
                         Some(ref x) => match **x {
                             Json::U64(ref y) => size.1 = *y as u32,
-                            _ => return Err(RsiError::Metadata)
+                            _ => return Err(RsiError::Metadata("Size: y not a number.".to_string()))
                         },
-                        None => return Err(RsiError::Metadata)
+                        None => return Err(RsiError::Metadata("Size: x not included.".to_string()))
                     }
                 },
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("Size not an object.".to_string()))
             },
-            None => return Err(RsiError::Metadata)
+            None => return Err(RsiError::Metadata("Size not included.".to_string()))
         }
 
         let states = match json.get("states") {
@@ -126,9 +126,9 @@ impl Rsi {
                 Json::Array(ref array) => {
                     array
                 },
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("States not an array.".to_string()))
             },
-            None => return Err(RsiError::Metadata)
+            None => return Err(RsiError::Metadata("states not included.".to_string()))
         };
 
         let mut rsi = Rsi {
@@ -139,7 +139,7 @@ impl Rsi {
         for json in states {
             match *json {
                 Json::Object(ref o) => rsi.add_state(State::from_json(&o, path, size)?),
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("State not an object.".to_string()))
             };
         }
 

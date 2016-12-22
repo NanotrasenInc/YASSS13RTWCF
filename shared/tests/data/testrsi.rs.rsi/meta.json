@@ -1,0 +1,24 @@
+{
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "version": 1,
+    "states": [{
+        "name": "ByeThere",
+        "directions": 1,
+        "flags": {},
+        "select": [],
+        "delays": [
+            [1.0, 1.0, 1.0, 1.0]
+        ]
+    }, {
+        "name": "HiThere",
+        "directions": 1,
+        "flags": {},
+        "select": [],
+        "delays": [
+            []
+        ]
+    }]
+}

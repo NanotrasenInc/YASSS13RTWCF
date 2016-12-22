@@ -43,20 +43,20 @@ impl State {
         let name = match json.get("name") {
             Some(name) => match *name {
                 Json::String(ref name) => name,
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("Name not string.".to_string()))
             },
-            None => return Err(RsiError::Metadata)
+            None => return Err(RsiError::Metadata("name not included.".to_string()))
         };
 
         // TODO: Implement this when we actually have selectors
         let selectors = Vec::new();
 
         let directions = match json.get("directions") {
-            Some(directions) => match *directions {
-                Json::I64(directions) => directions as u8,
-                _ => return Err(RsiError::Metadata)
+            Some(json) => match *json {
+                Json::U64(d) => d as u8,
+                _ => return Err(RsiError::Metadata(format!("Directions not integer: {:?}", json)))
             },
-            None => return Err(RsiError::Metadata)
+            None => return Err(RsiError::Metadata("Directions not included.".to_string()))
         };
 
 
@@ -81,19 +81,19 @@ impl State {
                                     for item in array {
                                         match *item {
                                             Json::F64(delay) => vec.push(delay as f32),
-                                            _ => return Err(RsiError::Metadata)
+                                            _ => return Err(RsiError::Metadata("Delay not float.".to_string()))
                                         }
                                     }
                                     delays.push(vec);
                                 }
-                                _ => return Err(RsiError::Metadata)
+                                _ => return Err(RsiError::Metadata("Sub array of delays not an array.".to_string()))
                             },
-                            None => return Err(RsiError::Metadata)
+                            None => return Err(RsiError::Metadata("Too little directions".to_string()))
                         }
                     }
                     delays
                 },
-                _ => return Err(RsiError::Metadata)
+                _ => return Err(RsiError::Metadata("No delays at all.".to_string()))
             },
             // If we have no delays specified default to 0 everything.
             None => {
