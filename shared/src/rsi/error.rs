@@ -21,3 +21,21 @@ pub enum RsiError {
     /// If image throws an error loading one of the PNG files.
     ImageError(ImageError)
 }
+
+impl From<IOError> for RsiError {
+    fn from(err: IOError) -> RsiError {
+        RsiError::IO(err)
+    }
+}
+
+impl From<BuilderError> for RsiError {
+    fn from(err: BuilderError) -> RsiError {
+        RsiError::Json(err)
+    }
+}
+
+impl From<ImageError> for RsiError {
+    fn from(err: ImageError) -> RsiError {
+        RsiError::ImageError(err)
+    }
+}

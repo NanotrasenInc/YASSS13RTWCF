@@ -41,60 +41,47 @@ impl State {
 
     pub fn from_json(json: &Object, context: &Path, size: (u32, u32)) -> Result<State, RsiError> {
         let name = match json.get("name") {
-            Some(name) => match *name {
-                Json::String(ref name) => name,
-                _ => return Err(RsiError::Metadata("Name not string.".to_string()))
-            },
-            None => return Err(RsiError::Metadata("name not included.".to_string()))
+            Some(&Json::String(ref name)) => name,
+            _ => return Err(RsiError::Metadata("Name not string.".to_string()))
         };
 
         // TODO: Implement this when we actually have selectors
         let selectors = Vec::new();
 
         let directions = match json.get("directions") {
-            Some(json) => match *json {
-                Json::U64(d) => d as u8,
-                _ => return Err(RsiError::Metadata(format!("Directions not integer: {:?}", json)))
-            },
-            None => return Err(RsiError::Metadata("Directions not included.".to_string()))
+            Some(&Json::U64(d)) => d as u8,
+            _ => return Err(RsiError::Metadata(format!("Directions not integer: {:?}", json)))
         };
-
 
         let mut state = State::new(&name, &selectors, size, directions);
         state.flags = Vec::new();
         state.icons = Vec::with_capacity(directions as usize);
 
-
         // Oh god.
         // Please tell me there's a better way.
         let delays: Vec<Vec<f32>> = match json.get("delays") {
-            Some(json) => match *json {
-                // This level matches that "delays" is an array.
-                Json::Array(ref array) => {
-                    let mut delays = Vec::with_capacity(directions as usize);
-                    for direction in 0..directions {
-                        match array.get(direction as usize) {
-                            Some(json) => match *json {
-                                // THIS LEVEL matches the delay arrays itself.
-                                Json::Array(ref array) => {
-                                    let mut vec = Vec::with_capacity(array.len());
-                                    for item in array {
-                                        match *item {
-                                            Json::F64(delay) => vec.push(delay as f32),
-                                            _ => return Err(RsiError::Metadata("Delay not float.".to_string()))
-                                        }
-                                    }
-                                    delays.push(vec);
+            Some(&Json::Array(ref array)) => {
+                let mut delays = Vec::with_capacity(directions as usize);
+                for direction in 0..directions {
+                    match array.get(direction as usize) {
+                        Some(&Json::Array(ref array)) => {
+                            let mut vec = Vec::with_capacity(array.len());
+                            for item in array {
+                                match *item {
+                                    Json::F64(delay) => vec.push(delay as f32),
+                                    _ => return Err(RsiError::Metadata("Delay not float.".to_string()))
                                 }
-                                _ => return Err(RsiError::Metadata("Sub array of delays not an array.".to_string()))
-                            },
-                            None => return Err(RsiError::Metadata("Too little directions".to_string()))
-                        }
+                            }
+                            delays.push(vec);
+                        },
+                        Some(_) => return Err(RsiError::Metadata("Sub array of delays not an array.".to_string())),
+                        None => return Err(RsiError::Metadata("Too little directions".to_string()))
                     }
-                    delays
-                },
-                _ => return Err(RsiError::Metadata("No delays at all.".to_string()))
+                }
+                delays
             },
+            Some(_) => return Err(RsiError::Metadata("Invalid states list.".to_string())),
+
             // If we have no delays specified default to 0 everything.
             None => {
                 let mut delays = Vec::with_capacity(directions as usize);
@@ -107,10 +94,7 @@ impl State {
 
         // Open the image of our state.
         let imagepath = context.join(state.full_name.clone() + ".png");
-        let mut image = match image_open(imagepath) {
-            Ok(image) => image,
-            Err(error) => return Err(RsiError::ImageError(error))
-        };
+        let mut image = image_open(imagepath)?;
 
         let sheetdimensions = (image.dimensions().0 / size.0, image.dimensions().1 / size.1);
         let mut counter = 0;

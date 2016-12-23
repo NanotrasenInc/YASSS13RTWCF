@@ -67,68 +67,39 @@ impl Rsi {
 
         // Open and read file to meta_content, return an Err if anything failed.
         let mut meta_content = String::new();
-        match File::open(path.join("meta.json")) {
-            Ok(mut f) => {
-                if let Err(error) = f.read_to_string(&mut meta_content) {
-                    return Err(RsiError::IO(error));
-                }
-            },
-            Err(error) => return Err(RsiError::IO(error))
-        };
+        File::open(path.join("meta.json"))?.read_to_string(&mut meta_content)?;
 
-        let json = match Json::from_str(&meta_content) {
-            Ok(x) => if let Json::Object(a) = x {
-                        a
-                     } else {
-                        return Err(RsiError::Metadata("Not a root object".to_string()));
-                     },
-            Err(error) => return Err(RsiError::Json(error))
+        let json = match Json::from_str(&meta_content)? {
+            Json::Object(a) => a,
+            _ => return Err(RsiError::Metadata("Not a root object".to_string()))
         };
 
         match json.get("version") {
-            Some(ref x) => match **x {
-                Json::U64(version) => if MAXIMUM_RSI_VERSION < version || version < MINIMUM_RSI_VERSION {
+            Some(&Json::U64(version)) =>
+                if MAXIMUM_RSI_VERSION < version || version < MINIMUM_RSI_VERSION {
                     return Err(RsiError::Version);
                 },
                 _ => return Err(RsiError::Metadata("Version not a number.".to_string()))
-            },
-            None => return Err(RsiError::Metadata("Version not included.".to_string()))
-        }
+        };
 
-        // Surely there's a better way for this, right?
-        let mut size: (u32, u32) = (0, 0);
-        match json.get("size") {
-            Some(ref x) => match **x {
-                Json::Object(ref o) => {
-                    match o.get("x") {
-                        Some(ref x) => match **x {
-                            Json::U64(ref x) => size.0 = *x as u32,
-                            _ => return Err(RsiError::Metadata("size: x not a number.".to_string()))
-                        },
-                        None => return Err(RsiError::Metadata("Size: x not included.".to_string()))
-                    }
-
-                    match o.get("y") {
-                        Some(ref x) => match **x {
-                            Json::U64(ref y) => size.1 = *y as u32,
-                            _ => return Err(RsiError::Metadata("Size: y not a number.".to_string()))
-                        },
-                        None => return Err(RsiError::Metadata("Size: x not included.".to_string()))
-                    }
+        let size: (u32, u32) = match json.get("size") {
+            Some(&Json::Object(ref o)) => (
+                match o.get("x") {
+                    Some(&Json::U64(x)) => x as u32,
+                    _ => return Err(RsiError::Metadata("Size: x not included.".to_string()))
                 },
-                _ => return Err(RsiError::Metadata("Size not an object.".to_string()))
-            },
-            None => return Err(RsiError::Metadata("Size not included.".to_string()))
-        }
+
+                match o.get("y") {
+                    Some(&Json::U64(y)) => y as u32,
+                    _ => return Err(RsiError::Metadata("Size: y not included.".to_string()))
+                },
+            ),
+            _ => return Err(RsiError::Metadata("Size not an object.".to_string()))
+        };
 
         let states = match json.get("states") {
-            Some(ref x) => match **x {
-                Json::Array(ref array) => {
-                    array
-                },
-                _ => return Err(RsiError::Metadata("States not an array.".to_string()))
-            },
-            None => return Err(RsiError::Metadata("states not included.".to_string()))
+            Some(&Json::Array(ref array)) => array,
+            _ => return Err(RsiError::Metadata("States not an array.".to_string()))
         };
 
         let mut rsi = Rsi {
