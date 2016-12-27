@@ -1,11 +1,19 @@
 extern crate piston_window;
 extern crate shared;
+#[macro_use]
+extern crate slog;
+extern crate slog_term;
+#[macro_use]
+extern crate lazy_static;
+
+pub mod logs;
 
 use piston_window::*;
-use shared::test;
+use logs::LOGGER;
 
+#[allow(dead_code)]
 fn main() {
-    test::test();
+    info!(LOGGER, "Starting client"; "version" => env!("CARGO_PKG_VERSION"));
 
     let mut window: PistonWindow =
     WindowSettings::new("Hello Piston!", [640, 480])
