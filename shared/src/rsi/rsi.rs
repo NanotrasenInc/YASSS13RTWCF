@@ -8,6 +8,7 @@ use rustc_serialize::json::Json;
 
 /// Represents an RSI.
 #[allow(dead_code)]
+#[derive(Debug, Clone)]
 pub struct Rsi {
     /// The dimensions of the RSI's images.
     size: (u32, u32),

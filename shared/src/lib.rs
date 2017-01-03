@@ -12,3 +12,4 @@ pub mod helpers;
 pub mod rsi;
 pub mod config;
 pub mod logs;
+pub mod assets;

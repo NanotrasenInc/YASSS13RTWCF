@@ -2,8 +2,10 @@ use image::{GenericImage, DynamicImage, open as image_open};
 use rustc_serialize::json::{Json, Object};
 use std::path::Path;
 use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError};
+use std::fmt;
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct State {
     name: String,
     full_name: String,
@@ -181,5 +183,13 @@ impl State {
 
     pub fn get_icons_vec(&self) -> &Vec<Vec<(DynamicImage, f32)>> {
         &self.icons
+    }
+}
+
+impl fmt::Debug for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,
+               "State {{ full name: {}, size: {:?}, dir: {}, flags: {:?}}}",
+               self.full_name, self.size, self.directions, self.flags)
     }
 }
