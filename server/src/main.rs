@@ -25,7 +25,7 @@ fn main() {
     asset_dir.pop();
     asset_dir.push("data");
 
-    info!(LOGGER, "Loading asset diretory"; "directory" => format!("{:?}", asset_dir));
+    info!(LOGGER, "Loading asset directory"; "directory" => format!("{:?}", asset_dir));
     load_from_dir(asset_dir);
 
     let mut cfg = config::CONFIG.lock().unwrap();
