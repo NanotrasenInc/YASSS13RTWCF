@@ -5,8 +5,8 @@ use std::env;
 
 #[test]
 fn test_binary() {
-    let mut asset_dir = env::current_exe().expect("Unable to find executable path.");
-    asset_dir.pop();
+    let mut asset_dir = env::current_dir().expect("Unable to find executable path.");
+    asset_dir.push("tests");
     asset_dir.push("data");
 
     print!("{:?}", asset_dir);
@@ -24,8 +24,8 @@ fn test_binary() {
 
 #[test]
 fn test_rsi() {
-    let mut asset_dir = env::current_exe().expect("Unable to find executable path.");
-    asset_dir.pop();
+    let mut asset_dir = env::current_dir().expect("Unable to find executable path.");
+    asset_dir.push("tests");
     asset_dir.push("data");
 
     print!("{:?}", asset_dir);
