@@ -9,8 +9,6 @@ fn test_binary() {
     asset_dir.push("tests");
     asset_dir.push("data");
 
-    print!("{:?}", asset_dir);
-
     load_from_dir(asset_dir);
 
     if let Some(Asset::Binary(ref vec)) = get_asset("test") {
@@ -27,8 +25,6 @@ fn test_rsi() {
     let mut asset_dir = env::current_dir().expect("Unable to find executable path.");
     asset_dir.push("tests");
     asset_dir.push("data");
-
-    print!("{:?}", asset_dir);
 
     load_from_dir(asset_dir);
 
