@@ -184,6 +184,10 @@ impl State {
     pub fn get_icons_vec(&self) -> &Vec<Vec<(DynamicImage, f32)>> {
         &self.icons
     }
+
+    pub fn metadata_equality(&self, other: &State) -> bool {
+        
+    }
 }
 
 impl fmt::Debug for State {

@@ -56,6 +56,21 @@ impl Rsi {
     pub fn get_size(&self) -> (u32, u32) {
         self.size
     }
+
+    /// Checks whether two RSIs have equal metadata. This does **not** check equality of the images themselves!
+    ///
+    /// RSIs do not derive Eq or PartialEq due to the high overhead of checking `DynamicImage` equality.
+    pub fn metadata_equality(&self, other: &Rsi) -> bool {
+        if self.get_size() != other.get_size() {
+            return false;
+        }
+
+        for key in self.states.keys {
+            
+        }
+
+        true
+    }
 }
 
 #[allow(dead_code)]

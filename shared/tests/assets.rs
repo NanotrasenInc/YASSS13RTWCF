@@ -29,6 +29,11 @@ fn test_rsi() {
     load_from_dir(asset_dir);
 
     if let Some(Asset::Rsi(ref rsi)) = get_asset("testrsi.rs.rsi") {
+        let pass = true;
+        if rsi.get_size() != (32, 32)   {
+            pass = false;
+        }
+
         let a = format!("{:?}", rsi);
         let b = "Rsi { size: (32, 32), states: {\"ByeThere\": State { full name: ByeThere, size: (32, 32), dir: 1, flags: []}, \"HiThere\": State { full name: HiThere, size: (32, 32), dir: 1, flags: []}} }";
         if a != b {
