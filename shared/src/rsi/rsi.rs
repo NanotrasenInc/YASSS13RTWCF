@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, hash_map};
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path};
@@ -57,6 +57,11 @@ impl Rsi {
         self.size
     }
 
+    /// Returns an iterator over the states of this RSI in an arbitrary order.
+    pub fn iter_states<'a>(&'a self) -> States<'a> {
+        States { iter: self.states.values() }
+    }
+
     /// Checks whether two RSIs have equal metadata. This does **not** check equality of the images themselves!
     ///
     /// RSIs do not derive Eq or PartialEq due to the high overhead of checking `DynamicImage` equality.
@@ -65,8 +70,15 @@ impl Rsi {
             return false;
         }
 
-        for key in self.states.keys {
-            
+        for state in self.iter_states() {
+            match other.get(state.get_full_name()) {
+                Some(other_state) => {
+                    if !state.metadata_equality(other_state) {
+                        return false;
+                    }
+                },
+                _ => return false
+            };
         }
 
         true
@@ -131,5 +143,21 @@ impl Rsi {
         }
 
         Ok(rsi)
+    }
+
+    pub fn new(size: (u32, u32)) -> Rsi {
+        Rsi { size: size, states: HashMap::new() }
+    }
+}
+
+pub struct States<'a> {
+    iter: hash_map::Values<'a, String, State>
+}
+
+impl<'a> Iterator for States<'a> {
+    type Item = &'a State;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next()
     }
 }

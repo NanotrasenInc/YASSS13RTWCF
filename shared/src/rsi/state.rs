@@ -3,6 +3,7 @@ use rustc_serialize::json::{Json, Object};
 use std::path::Path;
 use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError};
 use std::fmt;
+use std::iter::IntoIterator;
 
 #[allow(dead_code)]
 #[derive(Clone)]
@@ -185,8 +186,27 @@ impl State {
         &self.icons
     }
 
+    pub fn get_icons_vec_mut(&mut self) -> &mut Vec<Vec<(DynamicImage, f32)>> {
+        &mut self.icons
+    }
+
     pub fn metadata_equality(&self, other: &State) -> bool {
-        
+        if self.get_size() != other.get_size()
+        || self.get_full_name() != other.get_full_name()
+        || self.get_directions() != other.get_directions()
+        || self.get_flags() != other.get_flags() {
+            return false;
+        }
+
+        for (ours, other) in self.get_icons_vec().iter().zip(other.get_icons_vec().iter()) {
+            for (&(_, ours), &(_, other)) in ours.iter().zip(other.iter()) {
+                if ours != other {
+                    return false;
+                }
+            }
+        }
+
+        true
     }
 }
 

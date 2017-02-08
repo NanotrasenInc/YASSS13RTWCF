@@ -1,6 +1,9 @@
 extern crate shared;
+extern crate image;
 
+use image::DynamicImage;
 use shared::assets::*;
+use shared::rsi::Rsi;
 use std::env;
 
 #[test]
@@ -12,9 +15,7 @@ fn test_binary() {
     load_from_dir(asset_dir);
 
     if let Some(Asset::Binary(ref vec)) = get_asset("test") {
-        if vec != &vec![104, 114, 114, 114, 114, 109, 10] {
-            panic!("Binary data did not match test file.");
-        }
+        assert_eq!(vec, &vec![104, 114, 114, 114, 114, 109]);
     } else {
         panic!("Unable to get test file.");
     }
@@ -29,15 +30,20 @@ fn test_rsi() {
     load_from_dir(asset_dir);
 
     if let Some(Asset::Rsi(ref rsi)) = get_asset("testrsi.rs.rsi") {
-        let pass = true;
-        if rsi.get_size() != (32, 32)   {
-            pass = false;
+        assert_eq!(rsi.get_size(), (32, 32));
+
+        let mut tester = Rsi::new((32, 32));
+        {
+            let mut state = tester.new_state("ByeThere", &[], 1);
+
+            let mut vec = state.get_icons_vec_mut();
+            vec[0] = vec![(DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0)];
         }
 
-        let a = format!("{:?}", rsi);
-        let b = "Rsi { size: (32, 32), states: {\"ByeThere\": State { full name: ByeThere, size: (32, 32), dir: 1, flags: []}, \"HiThere\": State { full name: HiThere, size: (32, 32), dir: 1, flags: []}} }";
-        if a != b {
-            println!("{:?}\n{:?}", a, b);
+        tester.new_state("HiThere", &[], 1);
+
+        if !rsi.metadata_equality(&tester) {
+            println!("{:?}\n{:?}", rsi, tester);
             panic!("RSI metadata incorrect.");
         }
     } else {
