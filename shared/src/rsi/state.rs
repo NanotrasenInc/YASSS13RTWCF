@@ -3,7 +3,6 @@ use rustc_serialize::json::{Json, Object};
 use std::path::Path;
 use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError};
 use std::fmt;
-use std::iter::IntoIterator;
 
 #[allow(dead_code)]
 #[derive(Clone)]

@@ -41,7 +41,7 @@ impl Asset {
                 return None;
             }
         }
-        None
+        //None
     }
 
     /// Recursively ran over directories by the `AssetManager` to load assets.
