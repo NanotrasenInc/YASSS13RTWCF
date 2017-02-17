@@ -4,7 +4,6 @@ use std::path::Path;
 use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError};
 use std::fmt;
 
-#[allow(dead_code)]
 #[derive(Clone)]
 pub struct State {
     name: String,

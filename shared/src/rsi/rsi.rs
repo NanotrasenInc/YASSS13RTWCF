@@ -7,7 +7,6 @@ use super::{RsiError, RsiSelectors, State, MAXIMUM_RSI_VERSION, MINIMUM_RSI_VERS
 use rustc_serialize::json::Json;
 
 /// Represents an RSI.
-#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct Rsi {
     /// The dimensions of the RSI's images.
@@ -17,7 +16,6 @@ pub struct Rsi {
     states: HashMap<String, State>
 }
 
-#[allow(dead_code)]
 impl Rsi {
     /// Gets a state by name, without selectors.
     pub fn get(&self, name: &str) -> Option<&State> {

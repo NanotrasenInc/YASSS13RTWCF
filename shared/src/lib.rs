@@ -7,9 +7,12 @@ extern crate toml;
 #[macro_use]
 extern crate slog;
 extern crate slog_term;
+extern crate chashmap;
+extern crate nalgebra;
 
 pub mod helpers;
 pub mod rsi;
 pub mod config;
 pub mod logs;
 pub mod assets;
+pub mod entities;
