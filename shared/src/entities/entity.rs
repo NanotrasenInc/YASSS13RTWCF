@@ -2,11 +2,11 @@ use super::ID;
 
 #[derive(Hash, Debug)]
 pub struct Entity {
-    id: ID
+    id: ID,
 }
 
 impl Entity {
-    pub fn get_id(&self) -> u64 {
+    pub fn get_id(&self) -> ID {
         self.id
     }
 }
@@ -19,8 +19,8 @@ impl PartialEq for Entity {
 
 impl Eq for Entity {}
 
-impl PartialEq<u64> for Entity {
-    fn eq(&self, other: &u64) -> bool {
+impl PartialEq<ID> for Entity {
+    fn eq(&self, other: &ID) -> bool {
         self.id == *other
     }
 }

@@ -9,6 +9,8 @@ extern crate slog;
 extern crate slog_term;
 extern crate chashmap;
 extern crate nalgebra;
+#[macro_use]
+extern crate mopa;
 
 pub mod helpers;
 pub mod rsi;
