@@ -1,27 +1,31 @@
 use nalgebra::core::Vector2;
+use super::Component;
 
 pub struct Transform {
     position: Position,
-    /// Rotation in radians.
-    rotation: f32,
     scale: Vector2<f32>
 
     // TODO: needs locking children and parent.
 }
 
 impl Transform {
-    pub fn get_position(&self) -> &Position {
-        &self.position
+    pub fn empty() -> Transform {
+        Transform {
+            position: Position::empty(),
+            scale: Vector2::new(0.0, 0.0)
+        }
     }
 
-    pub fn get_rotation(&self) -> f32 {
-        self.rotation
+    pub fn get_position(&self) -> &Position {
+        &self.position
     }
 
     pub fn get_scale(&self) -> &Vector2<f32> {
         &self.scale
     }
 }
+
+impl Component for Transform {}
 
 // TODO: Move this!
 /// Represents an immutable, absolute location somewhere in the game world.
@@ -38,6 +42,11 @@ impl Position {
             dimension: dimension
         }
     }
+
+    pub fn empty() -> Position {
+        Position::new(&Vector2::new(0.0, 0.0), 0)
+    }
+
     pub fn get_location(&self) -> &Vector2<f64> {
         &self.location
     }
