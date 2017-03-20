@@ -228,7 +228,7 @@ mod tests {
     fn test_component() {
         let world = RwLock::new(World::new());
         world.write().unwrap().register_component::<TestComponent>();
-        let entity = make_builder(&world)
+        make_builder(&world)
             .with_component(TestComponent {a: 123})
             .finish();
 

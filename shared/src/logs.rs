@@ -1,4 +1,4 @@
-use slog::{Logger, DrainExt};
+use slog::{Logger, DrainExt, Discard};
 use slog_term::streamer;
 
 lazy_static! {
@@ -6,8 +6,12 @@ lazy_static! {
     ///
     /// Because the client or server loggers need to parent this, the default is immediately thrown away.
     pub static ref LOGGER: Logger = {
-        let drain = streamer().build().fuse();
+        if cfg!(test) {
+            let drain = streamer().build().fuse();
 
-        Logger::root(drain, None)
+            Logger::root(drain, None)
+        } else {
+            Logger::root(Discard, None)
+        }
     };
 }

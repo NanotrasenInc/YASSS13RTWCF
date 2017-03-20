@@ -52,7 +52,7 @@ pub fn load_from_dir<P: AsRef<Path>>(path: P) {
     manager.assets = new_assets;
     manager.root = new_root;
 
-    info!(LOGGER, "Assets loaded from directory"; "path" => format!("{:?}", path), "assets" => format!("{:?}", manager.assets));
+    info!(LOGGER, "Assets loaded from directory"; "path" => format!("{:?}", path));
 }
 
 /// Recursive function to load all files and subfiles in a directory.
