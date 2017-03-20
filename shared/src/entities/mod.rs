@@ -205,20 +205,52 @@ impl<'a> PartialEq<RwLockWriteGuard<'a,Entity>> for Entity {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::components::transform::Transform;
+
+    struct TestComponent {
+        a: i32
+    }
+
+    impl Component for TestComponent {}
 
     #[test]
-    fn test_world() {
+    fn test_basic() {
         let world = RwLock::new(World::new());
-        world.write().unwrap().register_component::<Transform>();
-        let entity = {
-            make_builder(&world)
-                .with_component(Transform::empty())
-                .finish()
-        };
-
+        if let Some(_) = world.read().unwrap().get_entity(0) {
+            panic!("World returned a Some!")
+        }
+        let entity = make_builder(&world).finish();
         let other = world.read().unwrap().get_entity(0).unwrap();
 
         assert_eq!(entity.read().unwrap().get_id(), other.read().unwrap().get_id());
+    }
+
+    #[test]
+    fn test_component() {
+        let world = RwLock::new(World::new());
+        world.write().unwrap().register_component::<TestComponent>();
+        let entity = make_builder(&world)
+            .with_component(TestComponent {a: 123})
+            .finish();
+
+        let comp = world.read().unwrap().get_component::<TestComponent>(0).unwrap();
+
+        assert_eq!(comp.read().unwrap().a, 123);
+    }
+
+    #[test]
+    fn test_iter_entities() {
+        let world = RwLock::new(World::new());
+        make_builder(&world).finish();
+        make_builder(&world).finish();
+        make_builder(&world).finish();
+
+        let lock = world.read().unwrap();
+        let mut iter = lock.iter_entities();
+        let a = iter.next().unwrap();
+        let b = iter.next().unwrap();
+        let c = iter.next().unwrap();
+        assert_eq!(a.0, a.1.read().unwrap().get_id());
+        assert_eq!(b.0, b.1.read().unwrap().get_id());
+        assert_eq!(c.0, c.1.read().unwrap().get_id());
     }
 }

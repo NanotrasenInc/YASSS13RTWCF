@@ -1,4 +1,3 @@
-pub mod transform;
-pub mod component;
+use std::any::Any;
 
-pub use self::component::Component;
+pub trait Component: Any + Send + Sync {}
