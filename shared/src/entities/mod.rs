@@ -4,7 +4,7 @@ use std::sync::{RwLock, RwLockWriteGuard};
 use std::any::TypeId;
 use std::collections::HashMap;
 use std::collections::hash_map;
-use self::components::Component;
+use self::components::{Component, PositionComponent};
 use std::sync::Arc;
 use mopa;
 
@@ -16,7 +16,11 @@ type ID = u64;
 
 lazy_static! {
     pub static ref WORLD: RwLock<World> = {
-        RwLock::new(World::new())
+        let mut world = World::new();
+
+        world.register_component::<PositionComponent>();
+
+        RwLock::new(world)
     };
 }
 
