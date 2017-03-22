@@ -1,6 +1,6 @@
-// TODO: Make this not need to be copied pasted between client/server.
-// At least the data copying.
+// Deprecated because asset copying never works correctly damnit!
 
+/*
 use std::io;
 use std::fs::{copy, create_dir_all, read_dir};
 use std::env;
@@ -43,3 +43,4 @@ fn copydir(source: &PathBuf, target: &PathBuf) -> io::Result<()> {
     }
     Ok(())
 }
+*/

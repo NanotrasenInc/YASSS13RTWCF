@@ -20,9 +20,12 @@ use std::env;
 use shared::entities::{WORLD, make_builder};
 use self::rendering::{RenderableComponent, Renderer};
 use shared::entities::components::PositionComponent;
+use shared::entities::components::position::Positional;
 use std::path::Path;
 use std::collections::HashSet;
 use input::{Key, Button, UpdateArgs};
+use shared::rsi::{RsiRef, StateId};
+use nalgebra::core::Vector2;
 
 fn main() {
     info!(LOGGER, "Starting client"; "version" => env!("CARGO_PKG_VERSION"));
@@ -35,6 +38,10 @@ fn main() {
 
     // Asset dir is next to the executable, under "data".
     let mut asset_dir = env::current_exe().expect("Unable to find executable path.");
+    // Go by data dir in the main project right now.
+    // TODO: Fix this for packaged release builds or something.
+    asset_dir.pop();
+    asset_dir.pop();
     asset_dir.pop();
     asset_dir.push("data");
 
@@ -47,7 +54,14 @@ fn main() {
 
     make_builder(&WORLD)
         .with_component(PositionComponent::empty())
-        .with_component(RenderableComponent {image: Path::new("renderingtest.rsi").to_owned()});
+        .with_component(RenderableComponent::new(&Path::new("renderingtest.rsi"),
+            &RsiRef::new(&StateId::new("toolbox"), 0, 0)));
+
+    make_builder(&WORLD)
+        .with_component(PositionComponent::new(Positional::new(Vector2::new(100.0, 100.0), 0)))
+        .with_component(RenderableComponent::new(&Path::new("renderingtest.rsi"),
+            &RsiRef::new(&StateId::new("Ytoolbox"), 0, 0)));
+
 
     let mut renderer = Renderer::new();
     renderer.load_textures(&mut window.factory);

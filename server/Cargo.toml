@@ -6,7 +6,7 @@ authors = [
     "clusterfack <clusterfack@users.noreply.github.com>",
     "CrAzYPiLoT-SS13 <minima38123@gmail.com>"
 ]
-build = "../build.rs"
+# build = "../build.rs"
 workspace = "../"
 publish = false
 

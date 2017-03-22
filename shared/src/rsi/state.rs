@@ -1,7 +1,7 @@
 use image::{GenericImage, DynamicImage, open as image_open};
 use rustc_serialize::json::{Json, Object};
 use std::path::Path;
-use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError};
+use rsi::{RsiFlags, RsiSelectors, full_state_name, RsiError, StateId};
 use std::fmt;
 
 #[derive(Clone)]
@@ -159,6 +159,10 @@ impl State {
         &mut self.flags
     }
 
+    pub fn to_stateid(&self) -> StateId {
+        StateId::with_select(&self.name, &self.selectors)
+    }
+
     /// Returns an icon.
     ///
     /// If the direction or index are too large, returns `None`.
@@ -201,6 +205,17 @@ impl State {
                 if ours != other {
                     return false;
                 }
+            }
+        }
+
+        true
+    }
+
+    /// Returns `true` if this State does not have any actual icons.
+    pub fn is_empty(&self) -> bool {
+        for icons in self.icons.iter() {
+            if !icons.is_empty() {
+                return false;
             }
         }
 

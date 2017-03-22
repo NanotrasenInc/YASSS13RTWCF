@@ -10,5 +10,11 @@
         "flags": {},
         "select": [],
         "delays": [[0.0]]
+    }, {
+        "name": "Ytoolbox",
+        "directions": 1,
+        "flags": {},
+        "select": [],
+        "delays": [[0.0]]
     }]
 }

@@ -1,9 +1,8 @@
 use std::collections::{HashMap, hash_map};
 use std::fs::File;
 use std::io::Read;
-use std::path::{Path};
-use super::helpers::full_state_name;
-use super::{RsiError, RsiSelectors, State, MAXIMUM_RSI_VERSION, MINIMUM_RSI_VERSION};
+use std::path::Path;
+use super::{RsiError, RsiSelectors, State, MAXIMUM_RSI_VERSION, MINIMUM_RSI_VERSION, full_state_name};
 use rustc_serialize::json::Json;
 
 /// Represents an RSI.
@@ -13,28 +12,38 @@ pub struct Rsi {
     size: (u32, u32),
 
     /// The states!
-    states: HashMap<String, State>
+    states: HashMap<StateId, State>
 }
 
 impl Rsi {
     /// Gets a state by name, without selectors.
     pub fn get(&self, name: &str) -> Option<&State> {
-        self.states.get(&name.to_string())
+        self.states.get(&StateId::new(name))
     }
 
     /// Gets a state by name, with selectors.
     pub fn get_select(&self, name: &str, select: &[RsiSelectors]) -> Option<&State> {
-        self.get(&full_state_name(name, select))
+        self.states.get(&StateId::with_select(name, select))
+    }
+
+    /// Gets a state by `StateId`
+    pub fn get_stateid(&self, id: &StateId) -> Option<&State> {
+        self.states.get(id)
     }
 
     /// Gets a mutable state by name, without selectors.
     pub fn get_mut(&mut self, name: &str) -> Option<&mut State> {
-        self.states.get_mut(&name.to_string())
+        self.states.get_mut(&StateId::new(name))
     }
 
     /// Gets a mutable state by name, with selectors.
     pub fn get_select_mut(&mut self, name: &str, select: &[RsiSelectors]) -> Option<&mut State> {
-        self.get_mut(&full_state_name(name, select))
+        self.states.get_mut(&StateId::with_select(name, select))
+    }
+
+    /// Gets a mutable state by `StateId`
+    pub fn get_stateid_mut(&mut self, id: &StateId) -> Option<&State> {
+        self.states.get(id)
     }
 
     /// Makes a new state and adds it to this RSI.
@@ -48,7 +57,7 @@ impl Rsi {
 
     /// Adds an existing state to this RSI, overriding any with the same identifying values.
     pub fn add_state(&mut self, state: State) {
-        self.states.insert(state.get_full_name().to_string(), state);
+        self.states.insert(state.to_stateid(), state);
     }
 
     pub fn get_size(&self) -> (u32, u32) {
@@ -149,7 +158,7 @@ impl Rsi {
 }
 
 pub struct States<'a> {
-    iter: hash_map::Values<'a, String, State>
+    iter: hash_map::Values<'a, StateId, State>
 }
 
 impl<'a> Iterator for States<'a> {
@@ -160,19 +169,46 @@ impl<'a> Iterator for States<'a> {
     }
 }
 
-/*
-TODO: Use proper referencing of RSI points.
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct StateId {
-    name: String,
-    select: Vec<RsiSelectors>,
-    dir: u8,
-    nth: usize
+    pub name: String,
+    pub select: Vec<RsiSelectors>
+}
+
+impl StateId {
+    pub fn new(name: &str) -> StateId {
+        StateId {
+            name: name.to_owned(),
+            select: Vec::new()
+        }
+    }
+
+    pub fn with_select(name: &str, select: &[RsiSelectors]) -> StateId {
+        StateId {
+            name: name.to_owned(),
+            select: select.to_owned()
+        }
+    }
+
+    pub fn to_full_name(&self) -> String {
+        full_state_name(&self.name, &self.select)
+    }
 }
 
 /// Represents a "position" inside an RSI.
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct RsiRef {
-    state: StateId
+    pub state: StateId,
+    pub dir: u8,
+    pub frame: usize
 }
-*/
+
+impl RsiRef {
+    pub fn new(state: &StateId, dir: u8, frame: usize) -> RsiRef {
+        RsiRef {
+            state: state.clone(),
+            dir: dir,
+            frame: frame
+        }
+    }
+}
