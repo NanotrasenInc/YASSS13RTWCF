@@ -17,6 +17,36 @@ pub enum Asset {
 }
 
 impl Asset {
+    /// Returns `true` if this asset is an `Asset::Binary`.
+    pub fn is_binary(&self) -> bool {
+        match self {
+            &Asset::Binary(_) => true,
+            _ => false
+        }
+    }
+
+    /// Reads the "bytes" of this asset. Some asset types such as RSIs do not have direct byte representations.
+    pub fn as_bytes(&self) -> Option<&[u8]> {
+        if let Asset::Binary(ref vec) = *self {
+            return Some(vec.as_slice());
+        }
+        None
+    }
+
+    pub fn is_rsi(&self) -> bool {
+        match self {
+            &Asset::Rsi(_) => true,
+            _ => false
+        }
+    }
+
+    pub fn as_rsi(&self) -> Option<&Rsi> {
+        match self {
+            &Asset::Rsi(ref rsi) => Some(&rsi),
+            _ => None
+        }
+    }
+
     /// Recursively ran over files by the `AssetManager` to load assets.
     ///
     /// If this returns `None` on a file, the file is ignored.
@@ -49,27 +79,18 @@ impl Asset {
     /// This is ran before files,
     /// if the second value of the tuple return is `false`, the contents of the directory are ignored.
     pub fn from_dir(path: &Path) -> (Option<Asset>, bool) {
-        if let Some(ext) = path.extension() {
-            if let Some(string) = ext.to_str() {
-                if string == "rsi" {
-                    return match Rsi::open(path) {
-                        Ok(rsi) => (Some(Asset::Rsi(rsi)), false),
-                        Err(error) => {
-                            error!(LOGGER, "Failed to open RSI."; "error" => format!("{:?}", error), "path" => format!("{:?}", path));
-                            (None, false)
-                        }
-                    };
-                }
-            }
+        if let Some(string) = path.extension().and_then(|x| x.to_str()) {
+            return match string {
+                "rsi" => match Rsi::open(path) {
+                    Ok(rsi) => (Some(Asset::Rsi(rsi)), false),
+                    Err(error) => {
+                        error!(LOGGER, "Failed to open RSI."; "error" => format!("{:?}", error), "path" => format!("{:?}", path));
+                        (None, false)
+                    }
+                },
+                _ => (None, true)
+            };
         }
         (None, true)
-    }
-
-    /// Reads the "bytes" of this asset. Some asset types such as RSIs do not have direct byte representations.
-    pub fn as_bytes<'a>(&'a self) -> Option<&'a [u8]> {
-        if let Asset::Binary(ref vec) = *self {
-            return Some(vec.as_slice());
-        }
-        None
     }
 }

@@ -18,6 +18,14 @@ impl PositionComponent {
     pub fn empty() -> PositionComponent {
         PositionComponent::new(Positional::empty())
     }
+
+    pub fn get_position(&self) -> Positional {
+        self.position
+    }
+
+    pub fn set_position(&mut self, position: Positional) {
+        self.position = position
+    }
 }
 
 impl Component for PositionComponent {}
@@ -25,8 +33,8 @@ impl Component for PositionComponent {}
 /// Represents an absolute position somewhere in the world.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Positional {
-    coordinates: Vector2<f64>,
-    dimension: u16
+    pub coordinates: Vector2<f64>,
+    pub dimension: u16
 }
 
 impl Positional {

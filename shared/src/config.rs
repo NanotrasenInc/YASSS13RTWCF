@@ -1,7 +1,7 @@
 extern crate toml;
 
 use toml::{ParserError, Parser, Table, Value};
-use std::sync::Mutex;
+use std::sync::RwLock;
 use std::path::Path;
 use std::io;
 use std::io::Read;
@@ -55,9 +55,9 @@ impl Config {
 }
 
 lazy_static! {
-    pub static ref CONFIG: Mutex<Config> = {
+    pub static ref CONFIG: RwLock<Config> = {
         // Initialize it to nothing.
-        Mutex::new(Config { toml: toml::Table::new() })
+        RwLock::new(Config { toml: toml::Table::new() })
     };
 }
 

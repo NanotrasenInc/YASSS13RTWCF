@@ -6,7 +6,7 @@ lazy_static! {
     ///
     /// Because the client or server loggers need to parent this, the default is immediately thrown away.
     pub static ref LOGGER: Logger = {
-        if cfg!(test) {
+        if cfg!(not(test)) {
             let drain = streamer().build().fuse();
 
             Logger::root(drain, None)

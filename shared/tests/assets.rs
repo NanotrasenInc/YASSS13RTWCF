@@ -12,12 +12,13 @@ fn test_binary() {
     asset_dir.push("tests");
     asset_dir.push("data");
 
-    load_from_dir(asset_dir);
+    load_from_dir(asset_dir).unwrap();
 
-    if let Some(Asset::Binary(ref vec)) = get_asset("test") {
+    let asset = get_asset("test").expect("Unable to get test file.");
+    if let Asset::Binary(ref vec) = *asset {
         assert_eq!(vec, &vec![104, 114, 114, 114, 114, 109]);
     } else {
-        panic!("Unable to get test file.");
+        panic!("Asset is not binary!")
     }
 }
 
@@ -27,26 +28,25 @@ fn test_rsi() {
     asset_dir.push("tests");
     asset_dir.push("data");
 
-    load_from_dir(asset_dir);
+    load_from_dir(asset_dir).unwrap();
 
-    if let Some(Asset::Rsi(ref rsi)) = get_asset("testrsi.rs.rsi") {
-        assert_eq!(rsi.get_size(), (32, 32));
+    let asset = get_asset("testrsi.rs.rsi").expect("Unable to get test file.");
+    let rsi = asset.as_rsi().expect("Asset is not an RSI.");
+    assert_eq!(rsi.get_size(), (32, 32));
 
-        let mut tester = Rsi::new((32, 32));
-        {
-            let mut state = tester.new_state("ByeThere", &[], 1);
+    let mut tester = Rsi::new((32, 32));
+    {
+        let mut state = tester.new_state("ByeThere", &[], 1);
 
-            let mut vec = state.get_icons_vec_mut();
-            vec[0] = vec![(DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0)];
-        }
-
-        tester.new_state("HiThere", &[], 1);
-
-        if !rsi.metadata_equality(&tester) {
-            println!("{:?}\n{:?}", rsi, tester);
-            panic!("RSI metadata incorrect.");
-        }
-    } else {
-        panic!("Unable to get test file.");
+        let mut vec = state.get_icons_vec_mut();
+        vec[0] = vec![(DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0)];
     }
+
+    tester.new_state("HiThere", &[], 1);
+
+    if !rsi.metadata_equality(&tester) {
+        println!("{:?}\n{:?}", rsi, tester);
+        panic!("RSI metadata incorrect.");
+    }
+
 }

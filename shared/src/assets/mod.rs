@@ -12,4 +12,4 @@ lazy_static! {
 
 
 pub use self::asset::Asset;
-pub use self::manager::{load_from_dir, get_asset};
+pub use self::manager::{load_from_dir, get_asset, ASSET_MANAGER};

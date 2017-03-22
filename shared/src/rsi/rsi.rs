@@ -159,3 +159,20 @@ impl<'a> Iterator for States<'a> {
         self.iter.next()
     }
 }
+
+/*
+TODO: Use proper referencing of RSI points.
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+pub struct StateId {
+    name: String,
+    select: Vec<RsiSelectors>,
+    dir: u8,
+    nth: usize
+}
+
+/// Represents a "position" inside an RSI.
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+pub struct RsiRef {
+    state: StateId
+}
+*/

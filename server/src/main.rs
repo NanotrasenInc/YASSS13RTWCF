@@ -28,7 +28,7 @@ fn main() {
     info!(LOGGER, "Loading asset directory"; "directory" => format!("{:?}", asset_dir));
     load_from_dir(asset_dir);
 
-    let mut cfg = config::CONFIG.lock().unwrap();
+    let mut cfg = config::CONFIG.write().unwrap();
     cfg.load_file(Path::new("config/config.toml")).unwrap();
 
     info!(LOGGER, "Port is {}.", cfg.get("connection.port").expect("Unable to find port inside configuration file."));

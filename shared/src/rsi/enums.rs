@@ -5,7 +5,7 @@ pub enum RsiFlags {
 
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub enum RsiSelectors {
 
 }

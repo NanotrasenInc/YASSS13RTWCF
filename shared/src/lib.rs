@@ -7,7 +7,6 @@ extern crate toml;
 #[macro_use]
 extern crate slog;
 extern crate slog_term;
-extern crate chashmap;
 extern crate nalgebra;
 #[macro_use]
 extern crate mopa;
