@@ -19,7 +19,7 @@ pub enum RsiError {
     Version,
 
     /// If image throws an error loading one of the PNG files.
-    ImageError(ImageError)
+    ImageError(ImageError),
 }
 
 impl From<IOError> for RsiError {

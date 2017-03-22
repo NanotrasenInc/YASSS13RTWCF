@@ -15,7 +15,7 @@ pub struct State {
     selectors: Vec<RsiSelectors>,
     flags: Vec<RsiFlags>,
 
-    icons: Vec<Vec<(DynamicImage, f32)>>
+    icons: Vec<Vec<(DynamicImage, f32)>>,
 }
 
 impl State {
@@ -31,7 +31,7 @@ impl State {
             selectors: select.to_vec(),
             flags: Vec::new(),
 
-            icons: Vec::with_capacity(directions as usize)
+            icons: Vec::with_capacity(directions as usize),
         };
 
         for _ in 0..directions {
@@ -43,7 +43,7 @@ impl State {
     pub fn from_json(json: &Object, context: &Path, size: (u32, u32)) -> Result<State, RsiError> {
         let name = match json.get("name") {
             Some(&Json::String(ref name)) => name,
-            _ => return Err(RsiError::Metadata("Name not string.".to_string()))
+            _ => return Err(RsiError::Metadata("Name not string.".to_string())),
         };
 
         // TODO: Implement this when we actually have selectors
@@ -51,7 +51,7 @@ impl State {
 
         let directions = match json.get("directions") {
             Some(&Json::U64(d)) => d as u8,
-            _ => return Err(RsiError::Metadata(format!("Directions not integer: {:?}", json)))
+            _ => return Err(RsiError::Metadata(format!("Directions not integer: {:?}", json))),
         };
 
         let mut state = State::new(&name, &selectors, size, directions);
@@ -70,17 +70,23 @@ impl State {
                             for item in array {
                                 match *item {
                                     Json::F64(delay) => vec.push(delay as f32),
-                                    _ => return Err(RsiError::Metadata("Delay not float.".to_string()))
+                                    _ => {
+                                        return Err(RsiError::Metadata("Delay not float."
+                                                                          .to_string()))
+                                    }
                                 }
                             }
                             delays.push(vec);
-                        },
-                        Some(_) => return Err(RsiError::Metadata("Sub array of delays not an array.".to_string())),
-                        None => return Err(RsiError::Metadata("Too little directions".to_string()))
+                        }
+                        Some(_) => {
+                            return Err(RsiError::Metadata("Sub array of delays not an array."
+                                                              .to_string()))
+                        }
+                        None => return Err(RsiError::Metadata("Too little directions".to_string())),
                     }
                 }
                 delays
-            },
+            }
             Some(_) => return Err(RsiError::Metadata("Invalid states list.".to_string())),
 
             // If we have no delays specified default to 0 everything.
@@ -104,10 +110,10 @@ impl State {
             // Now comes the fun part.
             // Cut the image and stuff!
             for delay in direction {
-                let cropped = image.crop(
-                    counter % sheetdimensions.0 * size.0,
-                    counter / sheetdimensions.1 * size.1,
-                    size.0, size.1);
+                let cropped = image.crop(counter % sheetdimensions.0 * size.0,
+                                         counter / sheetdimensions.1 * size.1,
+                                         size.0,
+                                         size.1);
 
                 icons.push((cropped, delay));
                 counter += 1;
@@ -193,10 +199,9 @@ impl State {
     }
 
     pub fn metadata_equality(&self, other: &State) -> bool {
-        if self.get_size() != other.get_size()
-        || self.get_full_name() != other.get_full_name()
-        || self.get_directions() != other.get_directions()
-        || self.get_flags() != other.get_flags() {
+        if self.get_size() != other.get_size() || self.get_full_name() != other.get_full_name() ||
+           self.get_directions() != other.get_directions() ||
+           self.get_flags() != other.get_flags() {
             return false;
         }
 
@@ -227,6 +232,9 @@ impl fmt::Debug for State {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
                "State {{ full name: {}, size: {:?}, dir: {}, flags: {:?}}}",
-               self.full_name, self.size, self.directions, self.flags)
+               self.full_name,
+               self.size,
+               self.directions,
+               self.flags)
     }
 }

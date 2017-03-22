@@ -12,7 +12,7 @@ use shared::rsi::RsiRef;
 #[derive(Debug)]
 pub struct RenderableComponent {
     image: PathBuf,
-    rsiref: RsiRef
+    rsiref: RsiRef,
 }
 
 impl Component for RenderableComponent {}
@@ -21,21 +21,21 @@ impl RenderableComponent {
     pub fn new(image: &Path, rsiref: &RsiRef) -> RenderableComponent {
         RenderableComponent {
             image: image.to_owned(),
-            rsiref: rsiref.clone()
+            rsiref: rsiref.clone(),
         }
     }
 }
 
 pub struct Renderer {
     textures: HashMap<(PathBuf, RsiRef), Texture<Resources>>,
-    pub camera: Vector2<f64>
+    pub camera: Vector2<f64>,
 }
 
 impl Renderer {
     pub fn new() -> Renderer {
         Renderer {
             textures: HashMap::new(),
-            camera: Vector2::new(0.0, 0.0)
+            camera: Vector2::new(0.0, 0.0),
         }
     }
 
@@ -51,11 +51,10 @@ impl Renderer {
                     let stateid = state.to_stateid();
                     for (dir, icons) in state.get_icons_vec().iter().enumerate() {
                         for (frame, &(ref image, _)) in icons.iter().enumerate() {
-                            let texture = Texture::from_image(
-                                factory,
-                                &image.to_rgba().clone(),
-                                &TextureSettings::new()
-                            ).unwrap();
+                            let texture = Texture::from_image(factory,
+                                                              &image.to_rgba().clone(),
+                                                              &TextureSettings::new())
+                                    .unwrap();
                             let rsiref = RsiRef::new(&stateid, dir as u8, frame);
                             self.textures.insert((path.clone(), rsiref), texture);
                         }
@@ -74,8 +73,12 @@ impl Renderer {
                 let pos = position.read().unwrap().get_position();
                 let new_coords = pos.coordinates - self.camera;
                 // TODO: Don't clone() this shit you idiot.
-                let texture = self.textures.get(&(renderable.image.clone(), renderable.rsiref.clone())).unwrap();
-                image(texture, c.trans(new_coords[(0, 0)].round(), new_coords[(1, 0)].round()).transform, g)
+                let texture = self.textures
+                    .get(&(renderable.image.clone(), renderable.rsiref.clone()))
+                    .unwrap();
+                image(texture,
+                      c.trans(new_coords[(0, 0)].round(), new_coords[(1, 0)].round()).transform,
+                      g)
             }
         }
     }

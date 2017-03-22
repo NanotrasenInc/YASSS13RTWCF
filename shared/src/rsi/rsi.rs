@@ -2,7 +2,7 @@ use std::collections::{HashMap, hash_map};
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use super::{RsiError, RsiSelectors, State, MAXIMUM_RSI_VERSION, MINIMUM_RSI_VERSION, full_state_name};
+use super::*;
 use rustc_serialize::json::Json;
 
 /// Represents an RSI.
@@ -12,7 +12,7 @@ pub struct Rsi {
     size: (u32, u32),
 
     /// The states!
-    states: HashMap<StateId, State>
+    states: HashMap<StateId, State>,
 }
 
 impl Rsi {
@@ -69,9 +69,11 @@ impl Rsi {
         States { iter: self.states.values() }
     }
 
-    /// Checks whether two RSIs have equal metadata. This does **not** check equality of the images themselves!
+    /// Checks whether two RSIs have equal metadata.
+    /// This does **not** check equality of the images themselves!
     ///
-    /// RSIs do not derive Eq or PartialEq due to the high overhead of checking `DynamicImage` equality.
+    /// RSIs do not derive `Eq` or `PartialEq`,
+    /// due to the high overhead of checking `DynamicImage` equality.
     pub fn metadata_equality(&self, other: &Rsi) -> bool {
         if self.get_size() != other.get_size() {
             return false;
@@ -83,8 +85,8 @@ impl Rsi {
                     if !state.metadata_equality(other_state) {
                         return false;
                     }
-                },
-                _ => return false
+                }
+                _ => return false,
             };
         }
 
@@ -106,46 +108,47 @@ impl Rsi {
 
         let json = match Json::from_str(&meta_content)? {
             Json::Object(a) => a,
-            _ => return Err(RsiError::Metadata("Not a root object".to_string()))
+            _ => return Err(RsiError::Metadata("Not a root object".to_string())),
         };
 
         match json.get("version") {
-            Some(&Json::U64(version)) =>
+            Some(&Json::U64(version)) => {
                 if MAXIMUM_RSI_VERSION < version || version < MINIMUM_RSI_VERSION {
                     return Err(RsiError::Version);
-                },
-                _ => return Err(RsiError::Metadata("Version not a number.".to_string()))
+                }
+            }
+            _ => return Err(RsiError::Metadata("Version not a number.".to_string())),
         };
 
         let size: (u32, u32) = match json.get("size") {
-            Some(&Json::Object(ref o)) => (
-                match o.get("x") {
-                    Some(&Json::U64(x)) => x as u32,
-                    _ => return Err(RsiError::Metadata("Size: x not included.".to_string()))
-                },
+            Some(&Json::Object(ref o)) => {
+                (match o.get("x") {
+                     Some(&Json::U64(x)) => x as u32,
+                     _ => return Err(RsiError::Metadata("Size: x not included.".to_string())),
+                 },
 
-                match o.get("y") {
-                    Some(&Json::U64(y)) => y as u32,
-                    _ => return Err(RsiError::Metadata("Size: y not included.".to_string()))
-                },
-            ),
-            _ => return Err(RsiError::Metadata("Size not an object.".to_string()))
+                 match o.get("y") {
+                     Some(&Json::U64(y)) => y as u32,
+                     _ => return Err(RsiError::Metadata("Size: y not included.".to_string())),
+                 })
+            }
+            _ => return Err(RsiError::Metadata("Size not an object.".to_string())),
         };
 
         let states = match json.get("states") {
             Some(&Json::Array(ref array)) => array,
-            _ => return Err(RsiError::Metadata("States not an array.".to_string()))
+            _ => return Err(RsiError::Metadata("States not an array.".to_string())),
         };
 
         let mut rsi = Rsi {
             size: size,
-            states: HashMap::with_capacity(states.len())
+            states: HashMap::with_capacity(states.len()),
         };
 
         for json in states {
             match *json {
                 Json::Object(ref o) => rsi.add_state(State::from_json(&o, path, size)?),
-                _ => return Err(RsiError::Metadata("State not an object.".to_string()))
+                _ => return Err(RsiError::Metadata("State not an object.".to_string())),
             };
         }
 
@@ -153,12 +156,15 @@ impl Rsi {
     }
 
     pub fn new(size: (u32, u32)) -> Rsi {
-        Rsi { size: size, states: HashMap::new() }
+        Rsi {
+            size: size,
+            states: HashMap::new(),
+        }
     }
 }
 
 pub struct States<'a> {
-    iter: hash_map::Values<'a, StateId, State>
+    iter: hash_map::Values<'a, StateId, State>,
 }
 
 impl<'a> Iterator for States<'a> {
@@ -172,21 +178,21 @@ impl<'a> Iterator for States<'a> {
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct StateId {
     pub name: String,
-    pub select: Vec<RsiSelectors>
+    pub select: Vec<RsiSelectors>,
 }
 
 impl StateId {
     pub fn new(name: &str) -> StateId {
         StateId {
             name: name.to_owned(),
-            select: Vec::new()
+            select: Vec::new(),
         }
     }
 
     pub fn with_select(name: &str, select: &[RsiSelectors]) -> StateId {
         StateId {
             name: name.to_owned(),
-            select: select.to_owned()
+            select: select.to_owned(),
         }
     }
 
@@ -200,7 +206,7 @@ impl StateId {
 pub struct RsiRef {
     pub state: StateId,
     pub dir: u8,
-    pub frame: usize
+    pub frame: usize,
 }
 
 impl RsiRef {
@@ -208,7 +214,7 @@ impl RsiRef {
         RsiRef {
             state: state.clone(),
             dir: dir,
-            frame: frame
+            frame: frame,
         }
     }
 }

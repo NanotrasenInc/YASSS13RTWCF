@@ -49,18 +49,17 @@ fn main() {
     load_from_dir(asset_dir).expect("Failed to load assets.");
 
     let mut window: PistonWindow =
-    WindowSettings::new("YASSS13RTWCF", [640, 480])
-        .exit_on_esc(true).build().unwrap();
+        WindowSettings::new("YASSS13RTWCF", [640, 480]).exit_on_esc(true).build().unwrap();
 
     make_builder(&WORLD)
         .with_component(PositionComponent::empty())
         .with_component(RenderableComponent::new(&Path::new("renderingtest.rsi"),
-            &RsiRef::new(&StateId::new("toolbox"), 0, 0)));
+                                                 &RsiRef::new(&StateId::new("toolbox"), 0, 0)));
 
     make_builder(&WORLD)
         .with_component(PositionComponent::new(Positional::new(Vector2::new(100.0, 100.0), 0)))
         .with_component(RenderableComponent::new(&Path::new("renderingtest.rsi"),
-            &RsiRef::new(&StateId::new("Ytoolbox"), 0, 0)));
+                                                 &RsiRef::new(&StateId::new("Ytoolbox"), 0, 0)));
 
 
     let mut renderer = Renderer::new();
@@ -74,7 +73,7 @@ fn main() {
         e.press(|x| keys.insert(x));
         e.release(|x| keys.remove(&x));
 
-        e.update(|&UpdateArgs {dt: delta}| {
+        e.update(|&UpdateArgs { dt: delta }| {
             if keys.contains(&Button::Keyboard(Key::Up)) {
                 renderer.camera[(1, 0)] -= 300.0 * delta;
             } else if keys.contains(&Button::Keyboard(Key::Down)) {

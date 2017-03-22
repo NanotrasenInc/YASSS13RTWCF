@@ -39,7 +39,10 @@ fn test_rsi() {
         let mut state = tester.new_state("ByeThere", &[], 1);
 
         let mut vec = state.get_icons_vec_mut();
-        vec[0] = vec![(DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0), (DynamicImage::new_rgba8(32, 32), 1.0)];
+        vec[0] = vec![(DynamicImage::new_rgba8(32, 32), 1.0),
+                      (DynamicImage::new_rgba8(32, 32), 1.0),
+                      (DynamicImage::new_rgba8(32, 32), 1.0),
+                      (DynamicImage::new_rgba8(32, 32), 1.0)];
     }
 
     tester.new_state("HiThere", &[], 1);

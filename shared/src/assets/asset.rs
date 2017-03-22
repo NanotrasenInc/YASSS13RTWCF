@@ -13,7 +13,7 @@ pub enum Asset {
     Binary(Vec<u8>),
 
     /// An RSI.
-    Rsi(Rsi)
+    Rsi(Rsi),
 }
 
 impl Asset {
@@ -21,11 +21,12 @@ impl Asset {
     pub fn is_binary(&self) -> bool {
         match self {
             &Asset::Binary(_) => true,
-            _ => false
+            _ => false,
         }
     }
 
-    /// Reads the "bytes" of this asset. Some asset types such as RSIs do not have direct byte representations.
+    /// Reads the "bytes" of this asset.
+    /// Some asset types such as RSIs do not have direct byte representations.
     pub fn as_bytes(&self) -> Option<&[u8]> {
         if let Asset::Binary(ref vec) = *self {
             return Some(vec.as_slice());
@@ -36,14 +37,14 @@ impl Asset {
     pub fn is_rsi(&self) -> bool {
         match self {
             &Asset::Rsi(_) => true,
-            _ => false
+            _ => false,
         }
     }
 
     pub fn as_rsi(&self) -> Option<&Rsi> {
         match self {
             &Asset::Rsi(ref rsi) => Some(&rsi),
-            _ => None
+            _ => None,
         }
     }
 
@@ -57,17 +58,17 @@ impl Asset {
             Ok(mut file) => {
                 let mut buf = Vec::new();
                 match file.read_to_end(&mut buf) {
-                    Ok(_) => {
-                        return Some(Asset::Binary(buf))
-                    },
+                    Ok(_) => return Some(Asset::Binary(buf)),
                     Err(error) => {
-                        error!(LOGGER, "Failed to read from file."; "error" => format!("{:?}", error), "path" => format!("{:?}", path));
+                        error!(LOGGER, "Failed to read from file.";
+                            "error" => format!("{:?}", error), "path" => format!("{:?}", path));
                         return None;
                     }
                 }
-            },
+            }
             Err(error) => {
-                error!(LOGGER, "Failed to open file."; "error" => format!("{:?}", error), "path" => format!("{:?}", path));
+                error!(LOGGER, "Failed to open file.";
+                    "error" => format!("{:?}", error), "path" => format!("{:?}", path));
                 return None;
             }
         }
@@ -77,19 +78,23 @@ impl Asset {
     /// Recursively ran over directories by the `AssetManager` to load assets.
     ///
     /// This is ran before files,
-    /// if the second value of the tuple return is `false`, the contents of the directory are ignored.
+    /// if the second value of the tuple return is `false`,
+    /// the contents of the directory are ignored.
     pub fn from_dir(path: &Path) -> (Option<Asset>, bool) {
         if let Some(string) = path.extension().and_then(|x| x.to_str()) {
             return match string {
-                "rsi" => match Rsi::open(path) {
-                    Ok(rsi) => (Some(Asset::Rsi(rsi)), false),
-                    Err(error) => {
-                        error!(LOGGER, "Failed to open RSI."; "error" => format!("{:?}", error), "path" => format!("{:?}", path));
-                        (None, false)
-                    }
-                },
-                _ => (None, true)
-            };
+                       "rsi" => {
+                           match Rsi::open(path) {
+                               Ok(rsi) => (Some(Asset::Rsi(rsi)), false),
+                               Err(error) => {
+                error!(LOGGER, "Failed to open RSI.";
+                    "error" => format!("{:?}", error), "path" => format!("{:?}", path));
+                (None, false)
+            }
+                           }
+                       }
+                       _ => (None, true),
+                   };
         }
         (None, true)
     }

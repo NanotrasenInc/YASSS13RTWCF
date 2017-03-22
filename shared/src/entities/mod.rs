@@ -37,11 +37,11 @@ impl World {
     /// Create a new world.
     ///
     /// Do not use this outside tests, use the global world instead.
-    pub fn new() -> World{
+    pub fn new() -> World {
         World {
             components: HashMap::new(),
             entities: HashMap::new(),
-            id: 0
+            id: 0,
         }
     }
 
@@ -68,15 +68,11 @@ impl World {
     pub fn iter_components<'a, T: Component>(&'a self) -> ComponentIter<'a, T> {
         let storage = self.get_storage();
         let iter = storage.0.iter();
-        ComponentIter {
-            iter: iter
-        }
+        ComponentIter { iter: iter }
     }
 
     pub fn iter_entities<'a>(&'a self) -> EntityIter<'a> {
-        EntityIter {
-            iter: self.entities.iter()
-        }
+        EntityIter { iter: self.entities.iter() }
     }
 }
 
@@ -107,7 +103,7 @@ pub fn make_builder<'a>(world: &'a RwLock<World>) -> EntityBuilder<'a> {
     let mut world = world.write().unwrap();
     let id = world.id;
     world.id += 1;
-    world.entities.insert(id, Arc::new(RwLock::new(Entity {id: id})));
+    world.entities.insert(id, Arc::new(RwLock::new(Entity { id: id })));
 
     EntityBuilder::new(world, id)
 }
@@ -149,14 +145,14 @@ impl<'a> Iterator for EntityIter<'a> {
 
 pub struct EntityBuilder<'a> {
     id: ID,
-    world: RwLockWriteGuard<'a, World>
+    world: RwLockWriteGuard<'a, World>,
 }
 
 impl<'a> EntityBuilder<'a> {
     fn new(world: RwLockWriteGuard<World>, id: ID) -> EntityBuilder {
         EntityBuilder {
             id: id,
-            world: world
+            world: world,
         }
     }
 
@@ -199,7 +195,7 @@ impl PartialEq<ID> for Entity {
     }
 }
 
-impl<'a> PartialEq<RwLockWriteGuard<'a,Entity>> for Entity {
+impl<'a> PartialEq<RwLockWriteGuard<'a, Entity>> for Entity {
     fn eq(&self, other: &RwLockWriteGuard<'a, Entity>) -> bool {
         self.id == other.id
     }
@@ -211,7 +207,7 @@ mod tests {
     use super::*;
 
     struct TestComponent {
-        a: i32
+        a: i32,
     }
 
     impl Component for TestComponent {}
@@ -223,20 +219,25 @@ mod tests {
             panic!("World returned a Some!")
         }
         let entity = make_builder(&world).finish();
-        let other = world.read().unwrap().get_entity(0).unwrap();
+        let other = world.read()
+            .unwrap()
+            .get_entity(0)
+            .unwrap();
 
-        assert_eq!(entity.read().unwrap().get_id(), other.read().unwrap().get_id());
+        assert_eq!(entity.read().unwrap().get_id(),
+                   other.read().unwrap().get_id());
     }
 
     #[test]
     fn test_component() {
         let world = RwLock::new(World::new());
         world.write().unwrap().register_component::<TestComponent>();
-        make_builder(&world)
-            .with_component(TestComponent {a: 123})
-            .finish();
+        make_builder(&world).with_component(TestComponent { a: 123 }).finish();
 
-        let comp = world.read().unwrap().get_component::<TestComponent>(0).unwrap();
+        let comp = world.read()
+            .unwrap()
+            .get_component::<TestComponent>(0)
+            .unwrap();
 
         assert_eq!(comp.read().unwrap().a, 123);
     }
@@ -253,8 +254,20 @@ mod tests {
         let a = iter.next().unwrap();
         let b = iter.next().unwrap();
         let c = iter.next().unwrap();
-        assert_eq!(a.0, a.1.read().unwrap().get_id());
-        assert_eq!(b.0, b.1.read().unwrap().get_id());
-        assert_eq!(c.0, c.1.read().unwrap().get_id());
+        assert_eq!(a.0,
+                   a.1
+                       .read()
+                       .unwrap()
+                       .get_id());
+        assert_eq!(b.0,
+                   b.1
+                       .read()
+                       .unwrap()
+                       .get_id());
+        assert_eq!(c.0,
+                   c.1
+                       .read()
+                       .unwrap()
+                       .get_id());
     }
 }

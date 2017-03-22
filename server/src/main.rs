@@ -9,7 +9,7 @@ extern crate slog_term;
 mod logs;
 
 use shared::config;
-use shared::assets::{load_from_dir};
+use shared::assets::load_from_dir;
 use std::env;
 use logs::LOGGER;
 
@@ -40,5 +40,7 @@ fn main() {
     config_path.push("config.toml");
     cfg.load_file(&config_path).unwrap();
 
-    info!(LOGGER, "Port is {}.", cfg.get("connection.port").expect("Unable to find port inside configuration file."));
+    info!(LOGGER,
+          "Port is {}.",
+          cfg.get("connection.port").expect("Unable to find port inside configuration file."));
 }

@@ -1,6 +1,6 @@
 [package]
 name = "client"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
     "PJB3005 <pieterjan.briers@gmail.com>",
     "clusterfack <clusterfack@users.noreply.github.com>",

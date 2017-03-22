@@ -8,12 +8,12 @@ use std::io::Read;
 use std::fs::File;
 
 pub struct Config {
-    toml: Table
+    toml: Table,
 }
 
 impl Config {
     /// Load the config from the string.
-    pub fn load(&mut self, data: &str) -> Result<(), Vec<ParserError>>{
+    pub fn load(&mut self, data: &str) -> Result<(), Vec<ParserError>> {
         let mut parser = Parser::new(data);
         if let Some(value) = parser.parse() {
             self.toml = value;
@@ -51,7 +51,6 @@ impl Config {
         }
         None
     }
-
 }
 
 lazy_static! {
@@ -67,7 +66,7 @@ pub enum ConfigError {
     Io(io::Error),
 
     /// The TOML failed to parse.
-    ParserError(Vec<ParserError>)
+    ParserError(Vec<ParserError>),
 }
 
 impl From<io::Error> for ConfigError {

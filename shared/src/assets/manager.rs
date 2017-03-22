@@ -21,14 +21,12 @@ pub struct AssetManager {
     assets: HashMap<PathBuf, Arc<Asset>>,
 
     /// The absolute path to which the assets are relative.
-    root: PathBuf
+    root: PathBuf,
 }
 
 impl AssetManager {
     pub fn iter<'a>(&'a self) -> AssetIter<'a> {
-        AssetIter {
-            iter: self.assets.iter()
-        }
+        AssetIter { iter: self.assets.iter() }
     }
 }
 
@@ -82,9 +80,7 @@ fn _load_dir(path: &Path, root: &Path, map: &mut HashMap<PathBuf, Arc<Asset>>) -
             if cont {
                 _load_dir(path, root, map)?;
             }
-        }
-
-        else if entry_type.is_file() {
+        } else if entry_type.is_file() {
             if let Some(asset) = Asset::from_file(path) {
                 map.insert(relative.to_owned(), Arc::new(asset));
             }
@@ -97,7 +93,7 @@ fn _load_dir(path: &Path, root: &Path, map: &mut HashMap<PathBuf, Arc<Asset>>) -
 }
 
 pub struct AssetIter<'a> {
-    iter: HashMapIter<'a, PathBuf, Arc<Asset>>
+    iter: HashMapIter<'a, PathBuf, Arc<Asset>>,
 }
 
 impl<'a> Iterator for AssetIter<'a> {
