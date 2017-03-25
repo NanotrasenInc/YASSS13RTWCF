@@ -72,7 +72,7 @@ impl State {
                                     Json::F64(delay) => vec.push(delay as f32),
                                     _ => {
                                         return Err(RsiError::Metadata("Delay not float."
-                                                                          .to_string()))
+                                            .to_string()))
                                     }
                                 }
                             }
@@ -80,7 +80,7 @@ impl State {
                         }
                         Some(_) => {
                             return Err(RsiError::Metadata("Sub array of delays not an array."
-                                                              .to_string()))
+                                .to_string()))
                         }
                         None => return Err(RsiError::Metadata("Too little directions".to_string())),
                     }

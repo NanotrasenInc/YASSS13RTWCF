@@ -1,10 +1,12 @@
+//! This module provides all
+
 pub mod components;
 
 use std::sync::{RwLock, RwLockWriteGuard};
 use std::any::TypeId;
 use std::collections::HashMap;
 use std::collections::hash_map;
-use self::components::{Component, PositionComponent};
+use entities::components::{Component, PositionComponent};
 use std::sync::Arc;
 use mopa;
 
@@ -15,7 +17,9 @@ type ID = u64;
 // TODO: Rewrite all the locking and stuff. This is horrible for performance and lock contention.
 
 lazy_static! {
-    pub static ref WORLD: RwLock<World> = {
+    /// A global [`World`](struct.world.html) for common use.
+    /// This is a lazy static, but it can be used as a global variable.
+    pub static ref THEWORLD: RwLock<World> = {
         let mut world = World::new();
 
         world.register_component::<PositionComponent>();
@@ -23,6 +27,10 @@ lazy_static! {
         RwLock::new(world)
     };
 }
+
+// Get around a case sensitivity collision with WORLD and World,
+// Which breaks cargo doc.
+pub use self::THEWORLD as WORLD;
 
 /// Represents a "storage" for entities and their components.
 pub struct World {
@@ -36,7 +44,7 @@ pub struct World {
 impl World {
     /// Create a new world.
     ///
-    /// Do not use this outside tests, use the global world instead.
+    /// Do not use this outside tests, use the static `WORLD` instead.
     pub fn new() -> World {
         World {
             components: HashMap::new(),
@@ -46,6 +54,7 @@ impl World {
     }
 
     /// Register a new component type for being used by entities.
+    /// This must always be called before attempting to use a component type!
     pub fn register_component<T: Component>(&mut self) {
         self.components.insert(TypeId::of::<T>(), Box::new(ComponentStorage::<T>::new()));
     }
@@ -65,23 +74,23 @@ impl World {
         ret
     }
 
+    /// Returns an iterator over all components of a certain type.
+    ///
+    /// # Panics.
+    /// Panics if the component type is not registered.
     pub fn iter_components<'a, T: Component>(&'a self) -> ComponentIter<'a, T> {
         let storage = self.get_storage();
         let iter = storage.0.iter();
         ComponentIter { iter: iter }
     }
 
+    /// Returns an iterator over all the entities.
     pub fn iter_entities<'a>(&'a self) -> EntityIter<'a> {
         EntityIter { iter: self.entities.iter() }
     }
 }
 
-// Non-public stuff here!
 impl World {
-    /// Gets a storage.
-    ///
-    /// # Panics.
-    /// Panics if the storage doesn't exist.
     fn get_storage<'a, T: Component>(&'a self) -> &'a ComponentStorage<T> {
         self.components
             .get(&TypeId::of::<T>())
@@ -99,6 +108,15 @@ impl World {
     }
 }
 
+/// Returns an `EntityBuilder` to make a new entity.
+/// See the documentation on `EntityBuilder` for more info.
+///
+/// This function takes in a reference to an `RwLock<World>`.
+/// As such you do not want to lock the `World` beforehand.
+/// Pass the global `WORLD` for common use instead.
+///
+/// **NOTE**: While the `EntityBuilder` is held, the world is mutably locked.
+/// If already have a lock on the world (or are planning to make one), this *will* deadlock!
 pub fn make_builder<'a>(world: &'a RwLock<World>) -> EntityBuilder<'a> {
     let mut world = world.write().unwrap();
     let id = world.id;
@@ -119,6 +137,7 @@ impl<T: Component> ComponentStorage<T> {
     }
 }
 
+/// An iterator over all components of a certain type in a `World`.
 pub struct ComponentIter<'a, T: Component> {
     iter: hash_map::Iter<'a, ID, Arc<RwLock<T>>>,
 }
@@ -131,6 +150,7 @@ impl<'a, T: Component> Iterator for ComponentIter<'a, T> {
     }
 }
 
+/// An iterator over all entities in a `World`.
 pub struct EntityIter<'a> {
     iter: hash_map::Iter<'a, ID, Arc<RwLock<Entity>>>,
 }
@@ -143,6 +163,22 @@ impl<'a> Iterator for EntityIter<'a> {
     }
 }
 
+/// An interface into building an entity.
+///
+/// An `EntityBuilder` is returned by [`make_builder`](fn.make_builder.html),
+/// it is a "window" into the creation of the entity,
+/// and allows you to give it components on creation.
+///
+/// # Example
+///
+/// ```
+/// use shared::entities::{WORLD, make_builder};
+/// use shared::entities::components::PositionComponent;
+/// let new_entity = make_builder(&WORLD)
+///                  .with_component(PositionComponent::empty())
+///                  .finish();
+/// assert_eq!(new_entity.read().unwrap().get_id(), 0);
+/// ```
 pub struct EntityBuilder<'a> {
     id: ID,
     world: RwLockWriteGuard<'a, World>,
@@ -165,6 +201,10 @@ impl<'a> EntityBuilder<'a> {
         self
     }
 
+    /// Consumes the `EntityBuilder`, returning the entity that was created.
+    ///
+    /// It should be noted that, as of the time of writing,
+    /// This function doesn't need to be called to have the entity be created.
     pub fn finish(self) -> Arc<RwLock<Entity>> {
         self.world.get_entity(self.id).unwrap()
     }

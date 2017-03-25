@@ -155,6 +155,7 @@ impl Rsi {
         Ok(rsi)
     }
 
+    /// Returns a new RSI with a set pair of dimensions.
     pub fn new(size: (u32, u32)) -> Rsi {
         Rsi {
             size: size,
@@ -163,6 +164,7 @@ impl Rsi {
     }
 }
 
+/// An iterator over all the states in an RSI.
 pub struct States<'a> {
     iter: hash_map::Values<'a, StateId, State>,
 }
@@ -175,6 +177,7 @@ impl<'a> Iterator for States<'a> {
     }
 }
 
+/// An identifier for a state in an RSI. Contains name and selectors.
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct StateId {
     pub name: String,
@@ -182,6 +185,7 @@ pub struct StateId {
 }
 
 impl StateId {
+    /// Create a new StateId with name, but no selectors.
     pub fn new(name: &str) -> StateId {
         StateId {
             name: name.to_owned(),
@@ -189,6 +193,7 @@ impl StateId {
         }
     }
 
+    /// Create a new StateId with name and selectors.
     pub fn with_select(name: &str, select: &[RsiSelectors]) -> StateId {
         StateId {
             name: name.to_owned(),
@@ -196,12 +201,18 @@ impl StateId {
         }
     }
 
+    /// Returns the "full name" of this state.
+    ///
+    /// The full name is the name and selectors of a state combined into one string,
+    /// for storing on disk. See the RSI spec for more info.
     pub fn to_full_name(&self) -> String {
         full_state_name(&self.name, &self.select)
     }
 }
 
 /// Represents a "position" inside an RSI.
+///
+/// It can be seen as an identifier for all individual icons stored in an RSI.
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct RsiRef {
     pub state: StateId,
