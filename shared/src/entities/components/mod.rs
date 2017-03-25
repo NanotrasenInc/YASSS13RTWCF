@@ -5,4 +5,4 @@ pub trait Component: Any + Send + Sync {}
 
 pub mod position;
 
-pub use self::position::PositionComponent;
+pub use self::position::{PositionComponent, Positional};
