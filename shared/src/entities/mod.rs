@@ -6,7 +6,7 @@ use std::sync::{RwLock, RwLockWriteGuard};
 use std::any::TypeId;
 use std::collections::HashMap;
 use std::collections::hash_map;
-use entities::components::{Component, PositionComponent};
+pub use entities::components::{Component, PositionComponent, Positional};
 use std::sync::Arc;
 use mopa;
 
