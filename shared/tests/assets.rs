@@ -1,4 +1,4 @@
-extern crate shared;
+extern crate yasss13rtwcf_shared as shared;
 extern crate image;
 
 use image::DynamicImage;

@@ -1,5 +1,5 @@
 extern crate piston_window;
-extern crate shared;
+extern crate yasss13rtwcf_shared as shared;
 #[macro_use]
 extern crate slog;
 extern crate slog_term;

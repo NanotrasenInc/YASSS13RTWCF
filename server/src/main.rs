@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-extern crate shared;
+extern crate yasss13rtwcf_shared as shared;
 extern crate toml;
 #[macro_use]
 extern crate slog;
