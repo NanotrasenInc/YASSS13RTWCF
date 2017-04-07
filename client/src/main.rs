@@ -9,6 +9,10 @@ extern crate gfx_device_gl;
 extern crate image;
 extern crate nalgebra;
 extern crate input;
+extern crate bytes;
+extern crate tokio_io;
+extern crate tokio_core;
+extern crate futures;
 
 mod logs;
 mod rendering;

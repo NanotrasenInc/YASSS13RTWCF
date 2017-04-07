@@ -5,7 +5,13 @@ extern crate toml;
 #[macro_use]
 extern crate slog;
 extern crate slog_term;
+extern crate bytes;
+extern crate tokio_io;
+extern crate tokio_core;
+extern crate futures;
+extern crate byteorder;
 
+mod net;
 mod logs;
 
 use shared::config;
@@ -40,7 +46,7 @@ fn main() {
     config_path.push("config.toml");
     cfg.load_file(&config_path).unwrap();
 
-    info!(LOGGER,
-          "Port is {}.",
-          cfg.get("connection.port").expect("Unable to find port inside configuration file."));
+    let port = cfg.get("connection.port").and_then(|x| x.as_integer()).expect("Unable to find port inside configuration file.");
+
+    net::run(port as u16);
 }
