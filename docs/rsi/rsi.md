@@ -35,7 +35,7 @@ Key | Meaning
 --- | -------
 `flags` | An associative list of `key: object` for defining extra data. There is currently no usage yet.
 `directions` | A number corresponding to the amount of directions a state has. This should only be a `1` or a `4`.
-* `delays` | If defined, a list of lists of delays for an animated icon state. Each list in the list corresponds to a direction. The delays are floats and represent seconds.
+`delays`* | If defined, a list of lists of delays for an animated icon state. Each list in the list corresponds to a direction. The delays are floats and represent seconds.
 
 <sup>\* Optional value.</sup>
 
@@ -45,7 +45,7 @@ States are always ordered alphabetically by their corresponding file name.
 
 The PNG file accompanying a state is always the name of the state, with all selectors appended with plus characters, sorted alphabetically. For example, a state with name "hello" and selectors "x" and "y" would be `hello+x+y.png` on disk.
 
-The file contains the individual states resolved with the directions and delays of the state. The size of the file is always a multiple of the RSI's `size`. Sprites are ordered from the top left to the bottom right, always going horizontally first. The amount of sprites per row or column is always made to be as equal as possible, favoring rows to be longer than rows if the amount of states is able to be divided perfectly.
+The file contains the individual states resolved with the directions and delays of the state. The size of the file is always a multiple of the RSI's `size`. Sprites are ordered from the top left to the bottom right, always going horizontally first. The amount of sprites per row or column is always made to be as equal as possible, favoring rows to be longer than columns if the amount of states is able to be divided perfectly.
 
 ### Example JSON
 
